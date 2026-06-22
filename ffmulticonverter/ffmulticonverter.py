@@ -297,11 +297,7 @@ class MainWindow(QMainWindow):
 
         fnames = QFileDialog.getOpenFileNames(self, 'FF Multi Converter - ' +
                 self.tr('Choose File'), config.home, filters,
-<<<<<<< HEAD
                 options=QFileDialog.Option.HideNameFilterDetails)[0]
-=======
-                options=QFileDialog.HideNameFilterDetails)[0]
->>>>>>> 5729c1af73a5dfba0fbf909902ce33d19fc9e9e3
 
         if fnames:
             for i in fnames:
