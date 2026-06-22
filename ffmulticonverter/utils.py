@@ -24,12 +24,12 @@ import shlex
 import subprocess
 import time
 
-from PyQt5.QtCore import pyqtSignal, QSize, Qt
-from PyQt5.QtWidgets import (
-        QAction, QLayout, QLineEdit, QListWidget, QListWidgetItem, QMenu,
+from PyQt6.QtCore import pyqtSignal, QSize, Qt
+from PyQt6.QtWidgets import (
+        QLayout, QLineEdit, QListWidget, QListWidgetItem, QMenu,
         QSpacerItem, QWidget, QHBoxLayout, QVBoxLayout, QGridLayout
         )
-
+from PyQt6.QtGui import QAction  
 
 def duration_in_seconds(duration):
     """
@@ -259,7 +259,7 @@ def add_to_grid(*items):
     return layout
 
 def create_action(parent, text, shortcut=None, icon=None, tip=None,
-                  triggered=None, toggled=None, context=Qt.WindowShortcut):
+                  triggered=None, toggled=None, context=Qt.ShortcutContext.WindowShortcut):
     """Create a QAction with the given attributes."""
     action = QAction(text, parent)
     if triggered is not None:
@@ -353,14 +353,14 @@ class FilesList(QListWidget):
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasUrls:
-            event.setDropAction(Qt.CopyAction)
+            event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
         else:
             event.ignore()
 
     def dropEvent(self, event):
         if event.mimeData().hasUrls:
-            event.setDropAction(Qt.CopyAction)
+            event.setDropAction(Qt.DropAction.CopyAction)
             event.accept()
             links = []
             for url in event.mimeData().urls():

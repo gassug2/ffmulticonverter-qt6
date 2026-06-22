@@ -15,8 +15,8 @@
 
 import os
 
-from PyQt5.QtCore import QSettings, QTimer
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QSettings, QTimer
+from PyQt6.QtWidgets import (
         QDialog, QDialogButtonBox, QFileDialog, QLabel, QLineEdit,
         QRadioButton, QSpacerItem, QTabWidget, QToolButton, QWidget,
         QPlainTextEdit, QPushButton
@@ -139,7 +139,7 @@ class Preferences(QDialog):
         tabWidget.addTab(widget4, self.tr('Documents'))
 
         buttonBox = QDialogButtonBox(
-                QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+                QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
 
         final_layout = utils.add_to_layout('v', tabWidget, None, buttonBox)
         self.setLayout(final_layout)

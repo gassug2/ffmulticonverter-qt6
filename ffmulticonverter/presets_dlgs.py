@@ -18,12 +18,12 @@ import re
 import time
 import xml.etree.ElementTree as etree
 
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import (
         QDialog, QDialogButtonBox, QFileDialog, QLabel, QLineEdit, QListWidget,
-        QMessageBox, QPushButton, QShortcut, QSizePolicy, QSpacerItem
+        QMessageBox, QPushButton, QSizePolicy, QSpacerItem
         )
-
+from PyQt6.QtGui import QShortcut
 from ffmulticonverter import utils
 from ffmulticonverter import config
 
@@ -58,9 +58,9 @@ class ShowPresets(QDialog):
         okQPB = QPushButton(self.tr('OK'))
         okQPB.setDefault(True)
 
-        spc1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        spc2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        spc3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spc1 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        spc2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        spc3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         grid = utils.add_to_grid(
                 [self.delete_allQPB, addQPB, spc1],
@@ -88,7 +88,7 @@ class ShowPresets(QDialog):
             self.presQLW.doubleClicked.connect(okQPB.click)
 
         del_shortcut = QShortcut(self)
-        del_shortcut.setKey(Qt.Key_Delete)
+        del_shortcut.setKey(Qt.Key.Key_Delete)
         del_shortcut.activated.connect(self.delete_preset)
 
         self.resize(430, 480)
@@ -145,7 +145,7 @@ class ShowPresets(QDialog):
     def add_preset(self):
         """Open AddorEditPreset() dialog and add a preset xml root."""
         dialog = AddorEditPreset(None, False, self)
-        if dialog.exec_():
+        if dialog.exec():
             element = etree.Element(dialog.name_text)
             label = etree.Element('label')
             label.text = dialog.label_text
@@ -178,8 +178,8 @@ class ShowPresets(QDialog):
         reply = QMessageBox.question(self, 'FF Multi Converter - ' + self.tr(
             'Delete Preset'), self.tr('Are you sure that you want to delete '
             'the {0} preset?'.format(xml_elem.tag)),
-            QMessageBox.Yes|QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:
+            QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
+        if reply == QMessageBox.StandardButton.Yes:
             self.root.remove(xml_elem)
             self.save_tree()
             self.fill_presQLW()
@@ -191,8 +191,8 @@ class ShowPresets(QDialog):
         """
         reply = QMessageBox.question(self, 'FF Multi Converter - ' + self.tr(
             'Delete Preset'), self.tr('Are you sure that you want to delete '
-            'all presets?'), QMessageBox.Yes|QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:
+            'all presets?'), QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
+        if reply == QMessageBox.StandardButton.Yes:
             self.root.clear()
             self.save_tree()
             self.fill_presQLW()
@@ -202,7 +202,7 @@ class ShowPresets(QDialog):
         elem = self.presQLW.currentItem().xml_element
         dialog = AddorEditPreset(elem, True)
 
-        if dialog.exec_():
+        if dialog.exec():
             elem.tag = dialog.name_text
             elem[0].text = dialog.label_text
             elem[1].text = dialog.command_text
@@ -248,8 +248,8 @@ class ShowPresets(QDialog):
         title = 'FF Multi Converter - Import'
         reply = QMessageBox.question(self, title, self.tr('All current '
                 'presets will be deleted.\nAre you sure that you want to '
-                'continue?'), QMessageBox.Yes|QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:
+                'continue?'), QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
+        if reply == QMessageBox.StandardButton.Yes:
             fname = QFileDialog.getOpenFileName(self, title, config.home)[0]
             if fname:
                 msg = self.tr('Successful import!')
@@ -280,8 +280,8 @@ class ShowPresets(QDialog):
         """Import the default xml tree."""
         reply = QMessageBox.question(self, 'FF Multi Converter - ' + self.tr(
             'Delete Preset'), self.tr('Are you sure that you want to restore '
-            'the default presets?'), QMessageBox.Yes|QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:
+            'the default presets?'), QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
+        if reply == QMessageBox.StandardButton.Yes:
             if os.path.exists(self.current_presets_file):
                 os.remove(self.current_presets_file)
 
@@ -303,9 +303,9 @@ class ShowPresets(QDialog):
                 self.tr('Presets Synchronization'),
                 self.tr('Current presets and default presets will be merged. '
                 'Are you sure that you want to continue?'),
-                QMessageBox.Yes|QMessageBox.Cancel
+                QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel
                 )
-        if not reply == QMessageBox.Yes:
+        if not reply == QMessageBox.StandardButton.Yes:
             return
 
         def_tree = etree.parse(self.original_presets_file)
@@ -350,8 +350,8 @@ class ShowPresets(QDialog):
         reply = QMessageBox.question(self, 'FF Multi Converter - ' + self.tr(
             'Remove old presets'), self.tr('All presets with an __OLD suffix '
             'will be deleted. Are you sure that you want to continue?'),
-            QMessageBox.Yes|QMessageBox.Cancel)
-        if not reply == QMessageBox.Yes:
+            QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
+        if not reply == QMessageBox.StandardButton.Yes:
             return
 
         self.load_xml()
@@ -392,7 +392,7 @@ class AddorEditPreset(QDialog):
         extQL = QLabel(self.tr('Output file extension'))
         self.extQLE = QLineEdit()
         buttonBox = QDialogButtonBox(
-                QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+                QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
 
         final_layout = utils.add_to_layout(
                 'v', nameQL, self.nameQLE, labelQL, self.labelQLE,

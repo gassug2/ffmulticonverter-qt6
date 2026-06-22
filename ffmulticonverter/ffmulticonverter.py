@@ -20,14 +20,14 @@ import textwrap
 import logging
 import webbrowser
 
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtCore import (
+from PyQt6.QtGui import QIcon, QShortcut, QKeySequence
+from PyQt6.QtCore import (
         PYQT_VERSION_STR, QCoreApplication, QLocale, QSettings, Qt,
         QTranslator, QT_VERSION_STR
         )
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
         QAbstractItemView, QApplication, QCheckBox, QFileDialog, QLabel,
-        QLineEdit, QMainWindow, QMessageBox, QPushButton, QShortcut, QTabWidget,
+        QLineEdit, QMainWindow, QMessageBox, QPushButton, QTabWidget,
         QToolButton, QWidget
         )
 
@@ -63,7 +63,7 @@ class MainWindow(QMainWindow):
         vlayout1 = utils.add_to_layout('v', addQPB, delQPB, clearQPB, None)
 
         self.filesList = utils.FilesList()
-        self.filesList.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.filesList.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         hlayout1 = utils.add_to_layout('h', self.filesList, vlayout1)
 
         outputQL = QLabel(self.tr('Output folder:'))
@@ -104,7 +104,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         openAction = utils.create_action(
-                self, self.tr('Open'), QKeySequence.Open, None,
+                self, self.tr('Open'), QKeySequence.StandardKey.Open, None,
                 self.tr('Open a file'), self.filesList_add
                 )
         convertAction = utils.create_action(
@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
         convertQPB.clicked.connect(convertAction.triggered)
 
         del_shortcut = QShortcut(self)
-        del_shortcut.setKey(Qt.Key_Delete)
+        del_shortcut.setKey(Qt.Key.Key_Delete)
         del_shortcut.activated.connect(self.filesList_delete)
 
         self.setWindowTitle('FF Multi Converter')
@@ -297,7 +297,7 @@ class MainWindow(QMainWindow):
 
         fnames = QFileDialog.getOpenFileNames(self, 'FF Multi Converter - ' +
                 self.tr('Choose File'), config.home, filters,
-                options=QFileDialog.HideNameFilterDetails)[0]
+                options=QFileDialog.Option.HideNameFilterDetails)[0]
 
         if fnames:
             for i in fnames:
@@ -414,13 +414,13 @@ class MainWindow(QMainWindow):
     def open_dialog_preferences(self):
         """Open the preferences dialog."""
         dialog = preferences_dlg.Preferences(self)
-        if dialog.exec_():
+        if dialog.exec():
             self.load_settings()
 
     def open_dialog_presets(self):
         """Open the presets dialog."""
         dialog = presets_dlgs.ShowPresets(self)
-        dialog.exec_()
+        dialog.exec()
 
     def open_dialog_about(self):
         """Call the about dialog with the appropriate values."""
@@ -444,7 +444,7 @@ class MainWindow(QMainWindow):
         translators = '\n\n'.join(translators)
 
         dialog = about_dlg.AboutDialog(text, image, authors, translators, self)
-        dialog.exec_()
+        dialog.exec()
 
 
 def main():
@@ -474,4 +474,4 @@ def main():
 
     converter = MainWindow()
     converter.show()
-    app.exec_()
+    app.exec()

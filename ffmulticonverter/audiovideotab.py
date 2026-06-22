@@ -15,9 +15,9 @@
 
 import re
 
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtCore import QRegExp, QSize, QTimer
-from PyQt5.QtWidgets import (
+from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtCore import QRegularExpression, QSize, QTimer
+from PyQt6.QtWidgets import (
         QApplication, QWidget, QComboBox, QLineEdit, QLabel, QPushButton,
         QCheckBox, QRadioButton, QHBoxLayout, QSpacerItem, QSizePolicy, QFrame,
         QButtonGroup, QMessageBox, QToolButton, QFileDialog
@@ -53,11 +53,11 @@ class AudioVideoTab(QWidget):
                 self.tr('vertical flip')
                 ]
 
-        digits_validator = QRegExpValidator(QRegExp(r'[1-9]\d*'), self)
-        digits_validator_wzero = QRegExpValidator(QRegExp(r'\d*'), self)
-        digits_validator_minus = QRegExpValidator(QRegExp(r'(-1|[1-9]\d*)'), self)
-        time_validator = QRegExpValidator(
-                QRegExp(r'\d{1,2}:\d{1,2}:\d{1,2}\.\d+'), self)
+        digits_validator = QRegularExpressionValidator(QRegularExpression(r'[1-9]\d*'), self)
+        digits_validator_wzero = QRegularExpressionValidator(QRegularExpression(r'\d*'), self)
+        digits_validator_minus = QRegularExpressionValidator(QRegularExpression(r'(-1|[1-9]\d*)'), self)
+        time_validator = QRegularExpressionValidator(
+                QRegularExpression(r'\d{1,2}:\d{1,2}:\d{1,2}\.\d+'), self)
 
         converttoQL = QLabel(self.tr('Convert to:'))
         self.extQCB = QComboBox()
@@ -136,8 +136,8 @@ class AudioVideoTab(QWidget):
         self.group = QButtonGroup()
         self.group.addButton(self.chan1QRB)
         self.group.addButton(self.chan2QRB)
-        spcr1 = QSpacerItem(40, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
-        spcr2 = QSpacerItem(40, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+        spcr1 = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
+        spcr2 = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
         chanlayout = utils.add_to_layout(
                 'h', spcr1, self.chan1QRB, self.chan2QRB, spcr2)
         self.audbitrateQCB = QComboBox()
@@ -181,10 +181,10 @@ class AudioVideoTab(QWidget):
                 hlayout4, hlayout5)
 
         line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
         self.moreQPB = QPushButton(QApplication.translate('Tab', 'More'))
-        self.moreQPB.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.moreQPB.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.moreQPB.setCheckable(True)
         hlayout3 = utils.add_to_layout('h', line, self.moreQPB)
 
@@ -301,7 +301,7 @@ class AudioVideoTab(QWidget):
         and self.extQCB and with the appropriate values.
         """
         dialog = presets_dlgs.ShowPresets(choose=True)
-        if dialog.exec_() and dialog.the_command is not None:
+        if dialog.exec() and dialog.the_command is not None:
             self.clear()
             self.commandQLE.setText(dialog.the_command)
             self.commandQLE.home(False)

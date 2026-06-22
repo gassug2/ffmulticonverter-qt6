@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QRegularExpression
+from PyQt6.QtGui import QRegularExpressionValidator
+from PyQt6.QtWidgets import (
         QWidget, QLabel, QComboBox, QCheckBox, QLineEdit, QMessageBox
         )
 
@@ -32,7 +32,7 @@ class ImageTab(QWidget):
         self.formats = config.image_formats
         self.extra_img = config.image_extra_formats
 
-        validator = QRegExpValidator(QRegExp(r'^[1-9]\d*'), self)
+        validator = QRegularExpressionValidator(QRegularExpression(r'^[1-9]\d*'), self)
 
         converttoQL = QLabel(self.tr('Convert to:'))
         self.extQCB = QComboBox()

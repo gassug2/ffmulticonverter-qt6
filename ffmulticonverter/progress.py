@@ -22,9 +22,9 @@ import subprocess
 import shlex
 import logging
 
-from PyQt5.QtCore import pyqtSignal, QTimer
-from PyQt5.QtGui import QTextCursor
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import pyqtSignal, QTimer
+from PyQt6.QtGui import QTextCursor
+from PyQt6.QtWidgets import (
         QApplication, QDialog, QFrame, QLabel, QPushButton, QProgressBar,
         QMessageBox, QTextEdit, QCommandLinkButton, QSizePolicy, QCheckBox
         )
@@ -73,12 +73,12 @@ class Progress(QDialog):
         self.cancelQPB = QPushButton(self.tr('Cancel'))
 
         detailsQPB = QCommandLinkButton(self.tr('Details'))
-        detailsQPB.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        detailsQPB.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         detailsQPB.setCheckable(True)
         detailsQPB.setMaximumWidth(113)
         line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
+        line.setFrameShape(QFrame.Shape.HLine)
+        line.setFrameShadow(QFrame.Shadow.Sunken)
         self.outputQTE = QTextEdit()
         self.outputQTE.setReadOnly(True)
         self.frame = QFrame()
@@ -142,7 +142,7 @@ class Progress(QDialog):
         """Append txt to the end of current self.outputQTE's text."""
         current = self.outputQTE.toPlainText()
         self.outputQTE.setText(current+txt)
-        self.outputQTE.moveCursor(QTextCursor.End)
+        self.outputQTE.moveCursor(QTextCursor.MoveOperation.End)
 
     def manage_conversions(self):
         """
@@ -154,7 +154,7 @@ class Progress(QDialog):
         if not self.files:
             sum_files = self.ok + self.error
             msg = QMessageBox(self)
-            msg.setStandardButtons(QMessageBox.Ok)
+            msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg.setWindowTitle(self.tr("Report"))
             msg.setText(self.tr("Converted: {0}/{1}".format(self.ok,sum_files)))
             msg.setModal(False)
@@ -196,15 +196,15 @@ class Progress(QDialog):
                 self,
                 'FF Multi Converter - ' + self.tr('Cancel Conversion'),
                 self.tr('Are you sure you want to cancel conversion?'),
-                QMessageBox.Yes|QMessageBox.Cancel
+                QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel
                 )
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             if self._type == 'AudioVideo':
                 self.process.kill()
             self.running = False
             self.thread.join()
             QDialog.reject(self)
-        if reply == QMessageBox.Cancel:
+        if reply == QMessageBox.StandardButton.Cancel:
             self.running = True
             if self._type == 'AudioVideo':
                 self.process.send_signal(signal.SIGCONT)
@@ -338,7 +338,7 @@ class Progress(QDialog):
         if size:
             resize = '-resize {0}'.format(size)
             if not mntaspect:
-                resize += '\!'
+                resize += '\\!'
 
         imgcmd = ' ' + imgcmd.strip() + ' '
         cmd = 'convert {0} {1}{2}{3}'.format(from_file, resize, imgcmd, to_file)
