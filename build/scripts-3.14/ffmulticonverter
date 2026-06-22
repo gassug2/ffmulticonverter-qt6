@@ -1,0 +1,5 @@
+#!/usr/lib/python-exec/python3.14/python3
+
+if __name__ == '__main__':
+    from ffmulticonverter import ffmulticonverter
+    ffmulticonverter.main()

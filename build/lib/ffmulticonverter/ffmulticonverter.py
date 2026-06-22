@@ -297,11 +297,7 @@ class MainWindow(QMainWindow):
 
         fnames = QFileDialog.getOpenFileNames(self, 'FF Multi Converter - ' +
                 self.tr('Choose File'), config.home, filters,
-<<<<<<< HEAD
-                options=QFileDialog.Option.HideNameFilterDetails)[0]
-=======
                 options=QFileDialog.HideNameFilterDetails)[0]
->>>>>>> 5729c1af73a5dfba0fbf909902ce33d19fc9e9e3
 
         if fnames:
             for i in fnames:
@@ -418,13 +414,13 @@ class MainWindow(QMainWindow):
     def open_dialog_preferences(self):
         """Open the preferences dialog."""
         dialog = preferences_dlg.Preferences(self)
-        if dialog.exec()
+        if dialog.exec_():
             self.load_settings()
 
     def open_dialog_presets(self):
         """Open the presets dialog."""
         dialog = presets_dlgs.ShowPresets(self)
-        dialog.exec()
+        dialog.exec_()
 
     def open_dialog_about(self):
         """Call the about dialog with the appropriate values."""
@@ -448,7 +444,8 @@ class MainWindow(QMainWindow):
         translators = '\n\n'.join(translators)
 
         dialog = about_dlg.AboutDialog(text, image, authors, translators, self)
-        dialog.exec()
+        dialog.exec_()
+
 
 def main():
     app = QApplication([i.encode('utf-8') for i in sys.argv])

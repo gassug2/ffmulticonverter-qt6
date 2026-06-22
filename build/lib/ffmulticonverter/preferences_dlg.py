@@ -139,7 +139,8 @@ class Preferences(QDialog):
         tabWidget.addTab(widget4, self.tr('Documents'))
 
         buttonBox = QDialogButtonBox(
-                QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
+                QDialogButtonBox.Ok|QDialogButtonBox.Cancel)
+
         final_layout = utils.add_to_layout('v', tabWidget, None, buttonBox)
         self.setLayout(final_layout)
 
