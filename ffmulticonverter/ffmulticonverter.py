@@ -414,7 +414,7 @@ class MainWindow(QMainWindow):
     def open_dialog_preferences(self):
         """Open the preferences dialog."""
         dialog = preferences_dlg.Preferences(self)
-        if dialog.exec()
+        if dialog.exec():
             self.load_settings()
 
     def open_dialog_presets(self):

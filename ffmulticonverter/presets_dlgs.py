@@ -181,8 +181,8 @@ class ShowPresets(QDialog):
             QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.Cancel)
         if reply == QMessageBox.StandardButton.Yes:
            self.root.remove(xml_elem)
-            self.save_tree()
-            self.fill_presQLW()
+           self.save_tree()
+           self.fill_presQLW()
 
     def delete_all_presets(self):
         """
