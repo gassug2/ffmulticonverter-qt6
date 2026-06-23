@@ -39,9 +39,18 @@ from ffmulticonverter import preferences_dlg
 from ffmulticonverter import presets_dlgs
 from ffmulticonverter import progress
 from ffmulticonverter import qrc_resources
-from ffmulticonverter.audiovideotab import AudioVideoTab
-from ffmulticonverter.imagetab import ImageTab
-from ffmulticonverter.documenttab import DocumentTab
+from ffmulticonverter.features import (
+    HAS_AUDIOVIDEO,
+    HAS_IMAGE,
+    HAS_DOCUMENT,
+)
+
+if HAS_AUDIOVIDEO:
+    from ffmulticonverter.audiovideotab import AudioVideoTab
+if HAS_IMAGE:
+    from ffmulticonverter.imagetab import ImageTab
+if HAS_DOCUMENT:
+    from ffmulticonverter.documenttab import DocumentTab
 
 
 class ValidationError(Exception):
@@ -73,18 +82,27 @@ class MainWindow(QMainWindow):
         self.toQTB.setText('...')
         hlayout2 = utils.add_to_layout('h', outputQL, self.toQLE, self.toQTB)
 
-        self.audiovideo_tab = AudioVideoTab(self)
-        self.image_tab = ImageTab(self)
-        self.document_tab = DocumentTab(self)
+        if HAS_AUDIOVIDEO:
+            self.audiovideo_tab = AudioVideoTab(self)
+        if HAS_IMAGE:
+            self.image_tab = ImageTab(self)
+        if HAS_DOCUMENT:
+            self.document_tab = DocumentTab(self)
 
-        self.tabs = [self.audiovideo_tab, self.image_tab, self.document_tab]
-        tab_names = [self.tr('Audio/Video'), self.tr('Images'),
-                     self.tr('Documents')]
+        self.tabs = []
+
+        if HAS_AUDIOVIDEO:
+            self.tabs.append((self.audiovideo_tab, self.tr("Audio/Video")))
+        if HAS_IMAGE:
+            self.tabs.append((self.image_tab, self.tr("Images")))
+        if HAS_DOCUMENT:
+            self.tabs.append((self.document_tab, self.tr("Documents")))
+
 
         self.tabWidget = QTabWidget()
-        for num, tab in enumerate(tab_names):
-            self.tabWidget.addTab(self.tabs[num], tab)
-        self.tabWidget.setCurrentIndex(0)
+        for widget, name in self.tabs:
+            self.tabWidget.addTab(widget, name)
+        #self.tabWidget.setCurrentIndex(0)
 
         self.origQCB = QCheckBox(
                 self.tr('Save each file in the same\nfolder as input file'))
@@ -195,8 +213,9 @@ class MainWindow(QMainWindow):
         addQPB.clicked.connect(self.filesList_add)
         delQPB.clicked.connect(self.filesList_delete)
         clearQPB.clicked.connect(self.filesList_clear)
-        self.tabWidget.currentChanged.connect(
-                lambda: self.tabs[0].moreQPB.setChecked(False))
+        if HAS_AUDIOVIDEO:
+            self.tabWidget.currentChanged.connect(
+                    lambda: self.audiovideo_tab.moreQPB.setChecked(False))
         self.origQCB.toggled.connect(
                 lambda: self.toQLE.setEnabled(not self.origQCB.isChecked()))
         self.toQTB.clicked.connect(self.get_output_folder)
@@ -209,10 +228,12 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('FF Multi Converter')
 
         self.load_settings()
-        self.check_for_dependencies()
+        #self.check_for_dependencies()
 
-        self.audiovideo_tab.set_default_command()
-        self.image_tab.set_default_command()
+        if HAS_AUDIOVIDEO:    
+            self.audiovideo_tab.set_default_command()
+        if HAS_IMAGE:
+            self.image_tab.set_default_command()
         self.toQLE.setText(self.default_output)
 
         self.filesList_update()
@@ -227,29 +248,29 @@ class MainWindow(QMainWindow):
             else:
                 print("ffmulticonverter: {0}: Not a file".format(i))
 
-    def check_for_dependencies(self):
-        """
-        Check if each one of the program dependencies are installed and
-        update self.dependenciesQL with the appropriate message.
-        """
-        if not utils.is_installed(self.ffmpeg_path):
-            self.ffmpeg_path = utils.is_installed('ffmpeg')
-            QSettings().setValue('ffmpeg_path', self.ffmpeg_path)
-        self.unoconv = utils.is_installed('unoconv')
-        self.imagemagick = utils.is_installed('convert')
+#    def check_for_dependencies(self):
+#        """
+#        Check if each one of the program dependencies are installed and
+#        update self.dependenciesQL with the appropriate message.
+#        """
+#        if not utils.is_installed(self.ffmpeg_path):
+#            self.ffmpeg_path = utils.is_installed('ffmpeg')
+#            QSettings().setValue('ffmpeg_path', self.ffmpeg_path)
+#        self.unoconv = utils.is_installed('unoconv')
+#        self.imagemagick = utils.is_installed('convert')
+#
+#        missing = []
+#        if not self.ffmpeg_path:
+#            missing.append('ffmpeg')
+#        if not self.unoconv:
+#            missing.append('unoconv')
+#        if not self.imagemagick:
+#            missing.append('imagemagick')
 
-        missing = []
-        if not self.ffmpeg_path:
-            missing.append('ffmpeg')
-        if not self.unoconv:
-            missing.append('unoconv')
-        if not self.imagemagick:
-            missing.append('imagemagick')
-
-        if missing:
-            missing = ', '.join(missing)
-            status = self.tr('Missing dependencies:') + ' ' + missing
-            self.dependenciesQL.setText(status)
+#        if missing:
+#            missing = ', '.join(missing)
+#            status = self.tr('Missing dependencies:') + ' ' + missing
+#            self.dependenciesQL.setText(status)
 
     def load_settings(self):
         settings = QSettings()
@@ -271,15 +292,17 @@ class MainWindow(QMainWindow):
         extraformats_image = (settings.value('extraformats_image') or [])
         extraformats_document = (settings.value('extraformats_document') or [])
 
-        self.audiovideo_tab.fill_video_comboboxes(videocodecs,
+        if HAS_AUDIOVIDEO:
+            self.audiovideo_tab.fill_video_comboboxes(videocodecs,
                 audiocodecs, extraformats_video)
-        self.image_tab.fill_extension_combobox(extraformats_image)
-        self.document_tab.fill_extension_combobox(extraformats_document)
+        if HAS_IMAGE:
+            self.image_tab.fill_extension_combobox(extraformats_image)
+        if HAS_DOCUMENT:
+            self.document_tab.fill_extension_combobox(extraformats_document)
 
     def get_current_tab(self):
-        for i in self.tabs:
-            if self.tabs.index(i) == self.tabWidget.currentIndex():
-                return i
+        index = self.tabWidget.currentIndex()
+        return self.tabs[index][0]
 
     def filesList_update(self):
         self.filesList.clear()
@@ -288,12 +311,16 @@ class MainWindow(QMainWindow):
 
     def filesList_add(self):
         filters  = 'All Files (*);;'
-        filters += 'Audio/Video Files (*.{});;'.format(
-                ' *.'.join(self.audiovideo_tab.formats))
-        filters += 'Image Files (*.{});;'.format(
-                ' *.'.join(self.image_tab.formats + self.image_tab.extra_img))
-        filters += 'Document Files (*.{})'.format(
-                ' *.'.join(self.document_tab.formats))
+
+        if HAS_AUDIOVIDEO:
+            filters += 'Audio/Video Files (*.{});;'.format(
+                    ' *.'.join(self.audiovideo_tab.formats))
+        if HAS_IMAGE:
+            filters += 'Image Files (*.{});;'.format(
+                    ' *.'.join(self.image_tab.formats + self.image_tab.extra_img))
+        if HAS_DOCUMENT:
+            filters += 'Document Files (*.{})'.format(
+                    ' *.'.join(self.document_tab.formats))
 
         fnames = QFileDialog.getOpenFileNames(self, 'FF Multi Converter - ' +
                 self.tr('Choose File'), config.home, filters,
@@ -329,8 +356,10 @@ class MainWindow(QMainWindow):
         self.deleteQCB.setChecked(False)
         self.filesList_clear()
 
-        self.audiovideo_tab.clear()
-        self.image_tab.clear()
+        if HAS_AUDIOVIDEO:
+            self.audiovideo_tab.clear()
+        if HAS_IMAGE:
+            self.image_tab.clear()
 
     def get_output_folder(self):
         if self.toQLE.isEnabled():

@@ -11,7 +11,7 @@ Project homepage: https://sites.google.com/site/ffmulticonverter/
 Dependencies
 -------------
 python3
-pyqt5
+pyqt6
 
 Optional dependencies
 ----------------------
@@ -23,15 +23,41 @@ The program does NOT require the optional dependencies to run.
 e.g. you can run the application even if you don't have ImageMagick installed,
 but you will be able to convert any other types except image files.
 
+Feature selection
+-----------------
+
+FFMC_AUDIOVIDEO, FFMC_IMAGE, and FFMC_DOCUMENT environment variables
+control which features are enabled at build time.
+
+These values are used during the build process to generate:
+
+    ffmulticonverter/features.py
+
+This file determines which tabs and functionality are included in the application.
+The settings do NOT affect runtime behavior directly.
+
+In order to generate your desired featureset, run:
+
+    python generate_features.py
+
+With the appropriate environment variables, and then build
+
+Build
+-----
+
+Run the following in the app directory:
+
+    python -m build
+
 Installation
 -------------
 From application's directory run as root:
-    python3 setup.py install
 
-Uninstall
-----------
-Run the uninstall.sh script as root to delete all project files from your
-system.
+    python -m install dist/*.whl
+
+Or:
+
+    pip install dist/*.whl
 
 Run without installing
 -----------------------

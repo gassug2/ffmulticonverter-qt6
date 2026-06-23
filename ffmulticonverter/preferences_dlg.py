@@ -24,6 +24,11 @@ from PyQt6.QtWidgets import (
 
 from ffmulticonverter import utils
 from ffmulticonverter import config
+from ffmulticonverter.features import (
+        HAS_AUDIOVIDEO,
+        HAS_IMAGE,
+        HAS_DOCUMENT,
+        )
 
 
 class Preferences(QDialog):
@@ -126,17 +131,23 @@ class Preferences(QDialog):
 
         widget1 = QWidget()
         widget1.setLayout(tabwidget1_layout)
-        widget2 = QWidget()
-        widget2.setLayout(tabwidget2_layout)
-        widget3 = QWidget()
-        widget3.setLayout(tabwidget3_layout)
-        widget4 = QWidget()
-        widget4.setLayout(tabwidget4_layout)
+        if HAS_AUDIOVIDEO:
+                widget2 = QWidget()
+                widget2.setLayout(tabwidget2_layout)
+        if HAS_IMAGE:
+                widget3 = QWidget()
+                widget3.setLayout(tabwidget3_layout)
+        if HAS_DOCUMENT:
+                widget4 = QWidget()
+                widget4.setLayout(tabwidget4_layout)
         tabWidget = QTabWidget()
         tabWidget.addTab(widget1, self.tr('General'))
-        tabWidget.addTab(widget2, self.tr('Audio/Video'))
-        tabWidget.addTab(widget3, self.tr('Images'))
-        tabWidget.addTab(widget4, self.tr('Documents'))
+        if HAS_AUDIOVIDEO:
+                tabWidget.addTab(widget2, self.tr('Audio/Video'))
+        if HAS_IMAGE:
+                tabWidget.addTab(widget3, self.tr('Images'))
+        if HAS_DOCUMENT:
+                tabWidget.addTab(widget4, self.tr('Documents'))
 
         buttonBox = QDialogButtonBox(
                 QDialogButtonBox.StandardButton.Ok|QDialogButtonBox.StandardButton.Cancel)
@@ -146,10 +157,11 @@ class Preferences(QDialog):
         self.defaultQTB.clicked.connect(self.open_dir)
         buttonBox.accepted.connect(self.save_settings)
         buttonBox.rejected.connect(self.reject)
-        defvidcodecsQPB.clicked.connect(
-                lambda: self.set_videocodecs(config.video_codecs))
-        defaudcodecsQPB.clicked.connect(
-                lambda: self.set_audiocodecs(config.audio_codecs))
+        if HAS_AUDIOVIDEO:
+                defvidcodecsQPB.clicked.connect(
+                        lambda: self.set_videocodecs(config.video_codecs))
+                defaudcodecsQPB.clicked.connect(
+                        lambda: self.set_audiocodecs(config.audio_codecs))
 
         self.resize(400, 450)
         self.setWindowTitle(self.tr('Preferences'))
@@ -163,18 +175,21 @@ class Preferences(QDialog):
         default_output = settings.value('default_output', type=str)
         prefix = settings.value('prefix', type=str)
         suffix = settings.value('suffix', type=str)
-        ffmpeg_path = settings.value('ffmpeg_path', type=str)
         default_command = (settings.value('default_command', type=str) or
                 config.default_ffmpeg_cmd)
-        videocodecs = (settings.value('videocodecs') or config.video_codecs)
-        audiocodecs = (settings.value('audiocodecs') or config.audio_codecs)
-        extraformats_video = (settings.value('extraformats_video') or [])
-        default_command_image = (settings.value('default_command_image',
-                type=str) or
-                config.default_imagemagick_cmd
-                )
-        extraformats_image = (settings.value('extraformats_image') or [])
-        extraformats_document = (settings.value('extraformats_document') or [])
+        if HAS_AUDIOVIDEO:
+                ffmpeg_path = settings.value('ffmpeg_path', type=str)
+                videocodecs = (settings.value('videocodecs') or config.video_codecs)
+                audiocodecs = (settings.value('audiocodecs') or config.audio_codecs)
+                extraformats_video = (settings.value('extraformats_video') or [])
+        if HAS_IMAGE:
+                default_command_image = (settings.value('default_command_image',
+                        type=str) or
+                        config.default_imagemagick_cmd
+                        )
+                extraformats_image = (settings.value('extraformats_image') or [])
+        if HAS_DOCUMENT:
+                extraformats_document = (settings.value('extraformats_document') or [])
 
         if overwrite_existing:
             self.exst_overwriteQRB.setChecked(True)
@@ -184,14 +199,17 @@ class Preferences(QDialog):
         self.defaultQLE.setText(default_output)
         self.prefixQLE.setText(prefix)
         self.suffixQLE.setText(suffix)
-        self.ffmpegpathQLE.setText(ffmpeg_path)
-        self.ffmpegcmdQLE.setText(default_command)
-        self.set_videocodecs(videocodecs)
-        self.set_audiocodecs(audiocodecs)
-        self.extraformatsffmpegQPTE.setPlainText("\n".join(extraformats_video))
-        self.imagecmdQLE.setText(default_command_image)
-        self.extraformatsimageQPTE.setPlainText("\n".join(extraformats_image))
-        self.extraformatsdocumentQPTE.setPlainText("\n".join(extraformats_document))
+        if HAS_AUDIOVIDEO:
+                self.ffmpegpathQLE.setText(ffmpeg_path)
+                self.ffmpegcmdQLE.setText(default_command)
+                self.set_videocodecs(videocodecs)
+                self.set_audiocodecs(audiocodecs)
+                self.extraformatsffmpegQPTE.setPlainText("\n".join(extraformats_video))
+        if HAS_IMAGE:
+                self.imagecmdQLE.setText(default_command_image)
+                self.extraformatsimageQPTE.setPlainText("\n".join(extraformats_image))
+        if HAS_DOCUMENT:
+                self.extraformatsdocumentQPTE.setPlainText("\n".join(extraformats_document))
 
     def set_videocodecs(self, codecs):
         self.vidcodecsQPTE.setPlainText("\n".join(codecs))
@@ -227,32 +245,40 @@ class Preferences(QDialog):
     def save_settings(self):
         """Set settings values by extracting the appropriate information from
         the graphical widgets."""
-        videocodecs = self.plaintext_to_list(self.vidcodecsQPTE)
-        audiocodecs = self.plaintext_to_list(self.audcodecsQPTE)
-        extraformats_video = self.plaintext_to_list(self.extraformatsffmpegQPTE,
-                config.video_formats)
-        extraformats_image = self.plaintext_to_list(self.extraformatsimageQPTE,
-                config.image_formats)
-        extraformats_document = self.plaintext_to_list(
-                self.extraformatsdocumentQPTE, config.document_formats)
+        if HAS_AUDIOVIDEO:
+                videocodecs = self.plaintext_to_list(self.vidcodecsQPTE)
+                audiocodecs = self.plaintext_to_list(self.audcodecsQPTE)
+                extraformats_video = self.plaintext_to_list(self.extraformatsffmpegQPTE,
+                        config.video_formats)
+        if HAS_IMAGE:
+                extraformats_image = self.plaintext_to_list(self.extraformatsimageQPTE,
+                        config.image_formats)
+        if HAS_DOCUMENT:
+                extraformats_document = self.plaintext_to_list(
+                        self.extraformatsdocumentQPTE, config.document_formats)
 
         settings = QSettings()
 
-        ffmpeg_path = os.path.expanduser(self.ffmpegpathQLE.text())
-        if not utils.is_installed(ffmpeg_path):
-            ffmpeg_path = utils.is_installed('ffmpeg')
+        if HAS_AUDIOVIDEO:
+                ffmpeg_path = os.path.expanduser(self.ffmpegpathQLE.text())
+
+                if not utils.is_installed(ffmpeg_path):
+                                ffmpeg_path = utils.is_installed('ffmpeg')
 
         settings.setValue('overwrite_existing', self.exst_overwriteQRB.isChecked())
         settings.setValue('default_output', self.defaultQLE.text())
         settings.setValue('prefix', self.prefixQLE.text())
         settings.setValue('suffix', self.suffixQLE.text())
-        settings.setValue('ffmpeg_path', ffmpeg_path)
-        settings.setValue('default_command', self.ffmpegcmdQLE.text())
-        settings.setValue('videocodecs', sorted(videocodecs))
-        settings.setValue('audiocodecs', sorted(audiocodecs))
-        settings.setValue('extraformats_video', sorted(extraformats_video))
-        settings.setValue('default_command_image', self.imagecmdQLE.text())
-        settings.setValue('extraformats_image', sorted(extraformats_image))
-        settings.setValue('extraformats_document', sorted(extraformats_document))
+        if HAS_AUDIOVIDEO:
+                settings.setValue('ffmpeg_path', ffmpeg_path)
+                settings.setValue('default_command', self.ffmpegcmdQLE.text())
+                settings.setValue('videocodecs', sorted(videocodecs))
+                settings.setValue('audiocodecs', sorted(audiocodecs))
+                settings.setValue('extraformats_video', sorted(extraformats_video))
+        if HAS_IMAGE:
+                settings.setValue('default_command_image', self.imagecmdQLE.text())
+                settings.setValue('extraformats_image', sorted(extraformats_image))
+        if HAS_DOCUMENT:
+                settings.setValue('extraformats_document', sorted(extraformats_document))
 
         self.accept()
