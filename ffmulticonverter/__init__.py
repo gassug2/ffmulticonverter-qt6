@@ -3,9 +3,9 @@ GUI File Format Converter
 """
 
 # version
-__major__ = 1
-__minor__ = 8
-__release__ = 0
+__major__ = 2
+__minor__ = 0
+__release__ = 1
 __prerelease__ = "" # alpha, beta, rc etc.
 
 # package information
