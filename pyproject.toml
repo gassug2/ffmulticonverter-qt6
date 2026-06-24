@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ffmulticonverter"
+version = "2.0.1"
+description = "GUI File Format Converter"
+readme = {text = """
+FF Multi Converter
+
+Graphical application which enables you to convert audio, video, image and
+document files between all popular formats using ffmpeg, unoconv, and
+ImageMagick.
+""", content-type = "text/plain"}
+
+authors = [
+    {name = "Ilias Stamatis", email = "stamatis.iliass@gmail.com"}
+]
+
+license = "GPL-3.0-only"
+
+keywords = [
+    "convert",
+    "file format",
+    "audio",
+    "video",
+    "images",
+    "documents",
+    "ffmpeg",
+    "imagemagick",
+    "unoconv"
+]
+
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: POSIX :: Linux",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Multimedia :: Video :: Conversion",
+    "Topic :: Multimedia :: Sound/Audio :: Conversion",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://sites.google.com/site/ffmulticonverter/"
+Download = "https://sourceforge.net/projects/ffmulticonv/files/"
+
+[tool.setuptools]
+packages = ["ffmulticonverter"]
+script-files = ["bin/ffmulticonverter"]
+
+[tool.setuptools.data-files]
+"share/applications" = ["share/ffmulticonverter.desktop"]
+"share/pixmaps" = ["share/ffmulticonverter.png"]
+"share/ffmulticonverter" = ["share/presets.xml"]
+"share/man/man1" = ["man/ffmulticonverter.1.gz"]
