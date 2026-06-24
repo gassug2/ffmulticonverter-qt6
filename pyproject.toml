@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ffmulticonverter"
-version = "2.0.1"
+version = "2.0.2"
 description = "GUI File Format Converter"
 readme = {text = """
 FF Multi Converter
@@ -15,7 +15,8 @@ ImageMagick.
 """, content-type = "text/plain"}
 
 authors = [
-    {name = "Ilias Stamatis", email = "stamatis.iliass@gmail.com"}
+    {name = "Ilias Stamatis", email = "stamatis.iliass@gmail.com"},
+    {email = "gassug2@gmail.com"}
 ]
 
 license = "GPL-3.0-only"
@@ -56,4 +57,4 @@ script-files = ["bin/ffmulticonverter"]
 "share/applications" = ["share/ffmulticonverter.desktop"]
 "share/pixmaps" = ["share/ffmulticonverter.png"]
 "share/ffmulticonverter" = ["share/presets.xml"]
-"share/man/man1" = ["man/ffmulticonverter.1.gz"]
+"share/man/man1" = ["man/ffmulticonverter.1"]
